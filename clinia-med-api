@@ -1,53 +1,37 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { Controller, Get, Module } from '@nestjs/common';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  // Habilita o CORS para que o seu frontend possa comunicar com a API
-  app.enableCors();
-  // A API irá correr na porta definida pelo ambiente (ex: Render) ou na 3000 por defeito
-  await app.listen(process.env.PORT || 3000);
+// --- Simulação da estrutura de um projeto NestJS básico num único ficheiro ---
+
+@Controller()
+class AppController {
+  @Get()
+  getHello(): { message: string } {
+    return { message: 'A API Clin-ia Med está no ar!' };
+  }
 }
-bootstrap();
-
-
-// --- Início do Ficheiro: src/app.module.ts ---
-
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 @Module({
   imports: [],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
-export class AppModule {}
+class AppModule {}
 
+// --- Fim da simulação ---
 
-// --- Início do Ficheiro: src/app.controller.ts ---
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
 
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+  // Habilita o CORS (Cross-Origin Resource Sharing).
+  // Isto permite que a sua aplicação frontend (a correr no navegador)
+  // possa fazer pedidos a esta API (a correr no servidor).
+  app.enableCors();
 
-@Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
-
-  @Get()
-  getHealthCheck(): object {
-    return this.appService.getHealthCheck();
-  }
+  // A porta é lida da variável de ambiente PORT, o que é necessário para o Render.
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
+  console.log(`🚀 A API está a rodar em: http://localhost:${port}`);
 }
+bootstrap();
 
-
-// --- Início do Ficheiro: src/app.service.ts ---
-
-import { Injectable } from '@nestjs/common';
-
-@Injectable()
-export class AppService {
-  getHealthCheck(): object {
-    return { status: 'ok', message: 'API do Clin-ia Med está no ar!' };
-  }
-}
