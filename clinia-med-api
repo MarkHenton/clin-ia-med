@@ -1,0 +1,53 @@
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  // Habilita o CORS para que o seu frontend possa comunicar com a API
+  app.enableCors();
+  // A API irá correr na porta definida pelo ambiente (ex: Render) ou na 3000 por defeito
+  await app.listen(process.env.PORT || 3000);
+}
+bootstrap();
+
+
+// --- Início do Ficheiro: src/app.module.ts ---
+
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+
+@Module({
+  imports: [],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+
+
+// --- Início do Ficheiro: src/app.controller.ts ---
+
+import { Controller, Get } from '@nestjs/common';
+import { AppService } from './app.service';
+
+@Controller()
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  @Get()
+  getHealthCheck(): object {
+    return this.appService.getHealthCheck();
+  }
+}
+
+
+// --- Início do Ficheiro: src/app.service.ts ---
+
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class AppService {
+  getHealthCheck(): object {
+    return { status: 'ok', message: 'API do Clin-ia Med está no ar!' };
+  }
+}
