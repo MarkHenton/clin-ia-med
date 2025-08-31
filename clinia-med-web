@@ -1,0 +1,48 @@
+import { useEffect, useState } from 'react';
+
+export default function HomePage() {
+  const [apiStatus, setApiStatus] = useState('A verificar estado da API...');
+
+  // Este efeito corre quando a página carrega
+  useEffect(() => {
+    // NOTA PARA O DESENVOLVEDOR: O URL abaixo é um placeholder para o modo de pré-visualização.
+    // No seu projeto real, você usará `process.env.NEXT_PUBLIC_API_URL` para que o Render
+    // possa injetar o URL correto da sua API automaticamente.
+    const apiUrl = 'http://84.247.174.32:3000';
+    
+    // Busca a mensagem da nossa API
+    fetch(apiUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('A resposta da rede não foi ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Se a chamada for bem-sucedida, mostra a mensagem da API
+        setApiStatus(`🎉 ${data.message}`);
+      })
+      .catch(error => {
+        // Se houver um erro, mostra uma mensagem de falha
+        console.error('Erro ao conectar à API:', error);
+        setApiStatus('❌ Não foi possível conectar à API.');
+      });
+  }, []);
+
+  return (
+    <div style={{ fontFamily: 'sans-serif', textAlign: 'center', marginTop: '50px' }}>
+      <main>
+        <h1 style={{ color: '#2c3e50', fontSize: '2.5rem' }}>
+          Bem-vindo ao Clin-ia Med
+        </h1>
+        <p style={{ color: '#34495e', fontSize: '1.2rem' }}>
+          A sua plataforma de estudos de medicina.
+        </p>
+        <div style={{ marginTop: '40px', padding: '20px', backgroundColor: '#f0f0f0', borderRadius: '8px', display: 'inline-block' }}>
+          <p>{apiStatus}</p>
+        </div>
+      </main>
+    </div>
+  );
+}
+
